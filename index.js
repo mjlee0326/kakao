@@ -3,6 +3,8 @@ var express = require('express');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
+var flash = require('connect-flash');
+var session = require('express-session');
 var app = express();
 
 // DB Setting
@@ -26,9 +28,13 @@ app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
+app.use(flash());
+app.use(session({ secret: 'MySecret', resave: true, saveUninitialized: true }));
 
 // Routes
-app.use('/', require('./route/home'));
+app.use('/', require('./routes/home'));
+app.use('/posts', require('./routes/posts'));
+app.use('/users', require('./routes/users'));
 
 // Port Setting
 var port = 3000;
