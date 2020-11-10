@@ -1,5 +1,3 @@
-// public/js/script.js
-
 $(function() {
     function get2digits(num) {
         return ('0' + num).slice(-2);
@@ -17,6 +15,7 @@ $(function() {
 
     function convertDate() {
         $('[data-date]').each(function(index, element) {
+            //console.log(element)
             var dateString = $(element).data('date');
             if (dateString) {
                 var date = new Date(dateString);
