@@ -1,17 +1,32 @@
 var express = require('express');
 var router = express.Router();
 var Post = require('../models/Post');
+const { getPostQueryString } = require('../util');
 var util = require('../util');
 
 // Index
-router.get('/', function(req, res) {
-    Post.find({})
+router.get('/', async function(req, res) {
+    var page = Math.max(1, parseInt(req.query.page));
+    var limit = Math.max(1, parseInt(req.query.limit));
+    page = !isNaN(page) ? page : 1;
+    limit = !isNaN(limit) ? limit : 10;
+
+    var skip = (page - 1) * limit;
+    var count = await Post.countDocuments({});
+    var maxPage = Math.ceil(count / limit);
+    var posts = await Post.find({})
         .populate('author')
         .sort('-createdAt')
-        .exec(function(err, posts) {
-            if (err) return res.json(err);
-            res.render('posts/index', { posts: posts });
-        });
+        .skip(skip)
+        .limit(limit)
+        .exec();
+
+    res.render('posts/index', {
+        posts: posts,
+        currentPage: page,
+        maxPage: maxPage,
+        limit: limit
+    });
 });
 
 // New
@@ -28,9 +43,9 @@ router.post('/', util.isLoggedin, function(req, res) {
         if (err) {
             req.flash('post', req.body);
             req.flash('errors', util.parseError(err));
-            return res.redirect('/posts/new');
+            return res.redirect('/posts/new' + res.locals.getPostQueryString());
         }
-        res.redirect('/posts');
+        res.redirect('/posts' + res.locals.getPostQueryString(false, { page: 1 }));
     });
 });
 
@@ -66,9 +81,9 @@ router.put('/:id', util.isLoggedin, checkPermission, function(req, res) {
         if (err) {
             req.flash('post', req.body);
             req.flash('errors', util.parseError(err));
-            return res.redirect('/posts/' + req.params.id + '/edit');
+            return res.redirect('/posts/' + req.params.id + '/edit' + res.locals.getPostQueryString());
         }
-        res.redirect('/posts/' + req.params.id);
+        res.redirect('/posts/' + req.params.id + res.locals + getPostQueryString());
     });
 });
 
@@ -76,7 +91,7 @@ router.put('/:id', util.isLoggedin, checkPermission, function(req, res) {
 router.delete('/:id', util.isLoggedin, checkPermission, function(req, res) {
     Post.deleteOne({ _id: req.params.id }, function(err) {
         if (err) return res.json(err);
-        res.redirect('/posts');
+        res.redirect('/posts' + res.locals / getPostQueryString());
     });
 });
 
