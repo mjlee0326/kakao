@@ -8,8 +8,6 @@ var passport = require('./config/passport');
 var util = require('./util');
 var app = express();
 
-const logger = require('./logger');
-
 // DB setting
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
@@ -36,9 +34,6 @@ app.use(session({ secret: 'MySecret', resave: true, saveUninitialized: true }));
 // Passport
 app.use(passport.initialize());
 app.use(passport.session());
-
-// Logger
-app.use(logger());
 
 // Custom Middlewares
 app.use(function(req, res, next) {
