@@ -7,6 +7,8 @@ var session = require('express-session');
 var passport = require('./config/passport');
 var app = express();
 
+const logger = require('./logger');
+
 // DB setting
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
@@ -14,11 +16,13 @@ mongoose.set('useCreateIndex', true);
 mongoose.set('useUnifiedTopology', true);
 mongoose.connect(process.env.MONGO_DB);
 var db = mongoose.connection;
+console.log('## DB connecting.');
 db.once('open', function() {
-    console.log('DB connected');
+    console.log('## DB connected.');
+    console.log('## Path:', process.env.MONGO_DB);
 });
 db.on('error', function(err) {
-    console.log('DB ERROR : ', err);
+    console.log('## DB ERROR : ', err);
 });
 
 // Other settings
@@ -33,6 +37,9 @@ app.use(session({ secret: 'MySecret', resave: true, saveUninitialized: true }));
 // Passport
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Logger
+app.use(logger());
 
 // Custom Middlewares
 app.use(function(req, res, next) {
@@ -49,5 +56,6 @@ app.use('/users', require('./routes/users'));
 // Port setting
 var port = 3000;
 app.listen(port, function() {
-    console.log('server on! http://localhost:' + port);
+    console.log('## Server ON');
+    console.log('## URL: http://localhost:' + port);
 });
