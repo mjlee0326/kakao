@@ -2,12 +2,12 @@
 
 var mongoose = require('mongoose');
 
-// Schema
+// schema
 var counterSchema = mongoose.Schema({
-    name: { type: String, require: true },
-    count: { type: Number, default: 0 }
+    name: { type: String, required: true },
+    count: { type: Number, default: 0 },
 });
 
-// Model & Export
+// model & export
 var Counter = mongoose.model('counter', counterSchema);
 module.exports = Counter;

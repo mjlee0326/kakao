@@ -1,5 +1,7 @@
+// models/Post.js
+
 var mongoose = require('mongoose');
-const Counter = require('./Counter');
+var Counter = require('./Counter');
 
 // schema
 var postSchema = mongoose.Schema({
@@ -7,7 +9,7 @@ var postSchema = mongoose.Schema({
     body: { type: String, required: [true, 'Body is required!'] },
     author: { type: mongoose.Schema.Types.ObjectId, ref: 'user', required: true },
     views: { type: Number, default: 0 },
-    numID: { type: Number },
+    numId: { type: Number },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date },
 });
@@ -15,11 +17,11 @@ var postSchema = mongoose.Schema({
 postSchema.pre('save', async function(next) {
     var post = this;
     if (post.isNew) {
-        counter = await Counter.findOne({ name: posts }).exec();
+        counter = await Counter.findOne({ name: 'posts' }).exec();
         if (!counter) counter = await Counter.create({ name: 'posts' });
         counter.count++;
         counter.save();
-        post.numID = counter.count;
+        post.numId = counter.count;
     }
     return next();
 });
