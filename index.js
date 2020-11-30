@@ -46,6 +46,7 @@ app.use(logger());
 app.use(function(req, res, next) {
     res.locals.isAuthenticated = req.isAuthenticated();
     res.locals.currentUser = req.user;
+    res.locals.util = util;
     next();
 });
 
