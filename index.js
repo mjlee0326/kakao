@@ -60,7 +60,7 @@ app.use('/api/files', require('./routes/files'));
 
 
 // Port setting
-var port = 3000;
+var port = (process.env.PORT || 3000);
 app.listen(port, function() {
     console.log('## Server ON');
     console.log('## URL: http://localhost:' + port);
