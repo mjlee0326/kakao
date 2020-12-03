@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var passport = require('../config/passport');
+var User = require('../models/User');
+
 
 // Home
 router.get('/', function(req, res) {
@@ -43,14 +45,22 @@ router.post('/login',
         }
     },
     passport.authenticate('local-login', {
-        successRedirect: '/posts',
-        failureRedirect: '/login'
-    }));
+        session: true
+    }),
+    function(req, res) {
+        User.findOne({ _id: req.user.id }, function(err, user) {
+            if (err) return res.json(err);
+            else res.json(user);
+        })
+
+    });
+
 
 // Logout
 router.get('/logout', function(req, res) {
     req.logout();
-    res.redirect('/');
+    res.json({ success: "true" });
+    // res.redirect('/');
 });
 
 module.exports = router;

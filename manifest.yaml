@@ -1,0 +1,8 @@
+---
+applications:
+  - name: gonggam
+    command: node index.js
+    random-route: true
+    buildback: https://github.com/cloudfoundry/nodejs-buildpack
+    memory: 512M
+    instance: 1

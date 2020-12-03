@@ -7,6 +7,7 @@ var User = require('../models/User');
 var Comment = require('../models/Comment');
 var File = require('../models/File');
 var util = require('../util');
+const { post } = require('./home');
 
 // Index
 router.get('/', async function(req, res) {
@@ -64,6 +65,7 @@ router.get('/', async function(req, res) {
                     title: 1,
                     author: {
                         username: 1,
+                        name: 1,
                     },
                     views: 1,
                     numId: 1,
@@ -75,7 +77,16 @@ router.get('/', async function(req, res) {
         ]).exec();
     }
 
-    res.render('posts/index', {
+    // res.render('posts/index', {
+    //     posts: posts,
+    //     currentPage: page,
+    //     maxPage: maxPage,
+    //     limit: limit,
+    //     searchType: req.query.searchType,
+    //     searchText: req.query.searchText
+    // });
+    res.status(200);
+    res.json({
         posts: posts,
         currentPage: page,
         maxPage: maxPage,
@@ -84,6 +95,38 @@ router.get('/', async function(req, res) {
         searchText: req.query.searchText
     });
 });
+
+
+router.get('/groups/:group',
+    function(req, res, next) {
+        Post.findOne({ group: req.params.group })
+            .exec(function(err, groups) {
+                if (err) {
+                    res.status(500);
+                    res.json({ success: false, message: err });
+                } else if (!groups) {
+                    res.json({ success: false, message: groups });
+                } else {
+                    res.json({ success: true, data: groups });
+                }
+            });
+    }
+);
+router.get('/groups/',
+    function(req, res, next) {
+        Post.find({})
+            .exec(function(err, groups) {
+                if (err) {
+                    res.status(500);
+                    res.json({ success: false, message: err });
+                } else if (!groups) {
+                    res.json({ success: false, message: 'not Found' });
+                } else {
+                    res.json({ success: true, data: groups });
+                }
+            });
+    }
+);
 
 // New
 router.get('/new', util.isLoggedin, function(req, res) {
@@ -107,7 +150,8 @@ router.post('/', util.isLoggedin, upload.single('attachment'), async function(re
             attachment.postId = post._id;
             attachment.save();
         }
-        res.redirect('/posts' + res.locals.getPostQueryString(false, { page: 1, searchText: '' }));
+        // res.redirect('/posts' + res.locals.getPostQueryString(false, { page: 1, searchText: '' }));
+        res.json();
     });
 });
 
@@ -117,14 +161,16 @@ router.get('/:id', function(req, res) {
     var commentError = req.flash('commentError')[0] || { _id: null, parentComment: null, errors: {} };
 
     Promise.all([
-            Post.findOne({ _id: req.params.id }).populate({ path: 'author', select: 'username' }).populate({ path: 'attachment', match: { isDeleted: false } }),
+            Post.findOne({ _id: req.params.id }).populate({ path: 'author' }).populate({ path: 'attachment', match: { isDeleted: false } }),
             Comment.find({ post: req.params.id }).sort('createdAt').populate({ path: 'author', select: 'username' })
         ])
         .then(([post, comments]) => {
             post.views++;
             post.save();
             var commentTrees = util.convertToTrees(comments, '_id', 'parentComment', 'childComments');
-            res.render('posts/show', { post: post, commentTrees: commentTrees, commentForm: commentForm, commentError: commentError });
+            // res.render('posts/show', { post: post, commentTrees: commentTrees, commentForm: commentForm, commentError: commentError });
+            res.status(200);
+            res.json({ post: post, commentTrees: commentTrees, commentForm: commentForm, commentError: commentError });
         })
         .catch((err) => {
             return res.json(err);

@@ -7,6 +7,7 @@ var session = require('express-session');
 var passport = require('./config/passport');
 var util = require('./util');
 var app = express();
+require('dotenv').config();
 
 const logger = require('./logger');
 

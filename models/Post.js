@@ -11,6 +11,7 @@ var postSchema = mongoose.Schema({
     attachment: { type: mongoose.Schema.Types.ObjectId, ref: 'file' },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date },
+    group: { type: String, required: true },
 });
 
 postSchema.pre('save', async function(next) {
