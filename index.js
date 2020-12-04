@@ -7,6 +7,7 @@ var session = require('express-session');
 var passport = require('./config/passport');
 var util = require('./util');
 var app = express();
+const cors = require('cors');
 require('dotenv').config();
 
 const logger = require('./logger');
@@ -35,6 +36,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 app.use(flash());
 app.use(session({ secret: 'MySecret', resave: true, saveUninitialized: true }));
+app.use(cors());
 
 // Passport
 app.use(passport.initialize());
