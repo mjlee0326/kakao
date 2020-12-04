@@ -20,14 +20,14 @@ util.isLoggedin = function(req, res, next) {
         next();
     } else {
         req.flash('errors', { login: 'Please login first' });
-        res.redirect('/login');
+        // res.redirect('/login');
     }
 }
 
 util.noPermission = function(req, res) {
     req.flash('errors', { login: "You don't have permission" });
     req.logout();
-    res.redirect('/login');
+    // res.redirect('/login');
 }
 
 util.getPostQueryString = function(req, res, next) {

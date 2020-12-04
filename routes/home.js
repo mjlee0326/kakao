@@ -41,7 +41,7 @@ router.post('/login',
             next();
         } else {
             req.flash('errors', errors);
-            res.redirect('/login');
+            // res.redirect('/login');
         }
     },
     passport.authenticate('local-login', {
@@ -49,8 +49,9 @@ router.post('/login',
     }),
     function(req, res) {
         User.findOne({ _id: req.user.id }, function(err, user) {
-            if (err) return res.json(err);
-            else res.json(user);
+            if (err) return res.send(err);
+            else res.send(user);
+
         })
 
     });
