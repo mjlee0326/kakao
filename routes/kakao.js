@@ -37,7 +37,7 @@ apiRouter.post('/sayHello', function(req, res) {
                     "title": `${data[0].title}`,
                     "description": `${data[0].body}`,
                     "thumbnail": {
-                    "imageUrl": "../dummy/1.png"
+                    "imageUrl": "https://i.kakao.com/docs/assets/skill/skill-json-format-intro.png"
                     },
                     "buttons": [
                     {
@@ -51,7 +51,7 @@ apiRouter.post('/sayHello', function(req, res) {
                     "title": `${data[1].title}`,
                     "description": `${data[1].body}`,
                     "thumbnail": {
-                        "imageUrl": "https://t1.daumcdn.net/cfile/tistory/9978AD415E09E29E35"
+                        "imageUrl": "https://i.kakao.com/docs/assets/skill/skill-json-format-intro.png"
                     },
                     "buttons": [
                         {
@@ -65,7 +65,7 @@ apiRouter.post('/sayHello', function(req, res) {
                       "title": `${data[2].title}`,
                       "description": `${data[2].body}`,
                       "thumbnail": {
-                          "imageUrl": "https://t1.daumcdn.net/cfile/tistory/9978AD415E09E29E35"
+                          "imageUrl": "https://i.kakao.com/docs/assets/skill/skill-json-format-intro.png"
                       },
                       "buttons": [
                           {
