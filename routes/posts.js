@@ -8,9 +8,10 @@ var Comment = require('../models/Comment');
 var File = require('../models/File');
 var util = require('../util');
 const { post } = require('./home');
+const cors = require('cors');
 
 // Index
-router.get('/', async function(req, res) {
+router.get('/', cors(), async function(req, res) {
     var page = Math.max(1, parseInt(req.query.page));
     var limit = Math.max(1, parseInt(req.query.limit));
     page = !isNaN(page) ? page : 1;
@@ -97,7 +98,7 @@ router.get('/', async function(req, res) {
 });
 
 
-router.get('/groups/:group',
+router.get('/groups/:group', cors(),
     function(req, res, next) {
         Post.findOne({ group: req.params.group })
             .exec(function(err, groups) {
@@ -112,7 +113,7 @@ router.get('/groups/:group',
             });
     }
 );
-router.get('/groups/',
+router.get('/groups/', cors(),
     function(req, res, next) {
         Post.find({})
             .exec(function(err, groups) {
@@ -129,14 +130,14 @@ router.get('/groups/',
 );
 
 // New
-router.get('/new', util.isLoggedin, function(req, res) {
+router.get('/new', cors(), util.isLoggedin, function(req, res) {
     var post = req.flash('post')[0] || {};
     var errors = req.flash('errors')[0] || {};
     res.render('posts/new', { post: post, errors: errors });
 });
 
 // create
-router.post('/', util.isLoggedin, upload.single('attachment'), async function(req, res) {
+router.post('/', cors(), util.isLoggedin, upload.single('attachment'), async function(req, res) {
     var attachment = req.file ? await File.createNewInstance(req.file, req.user._id) : undefined;
     req.body.attachment = attachment;
     req.body.author = req.user._id;
@@ -156,7 +157,7 @@ router.post('/', util.isLoggedin, upload.single('attachment'), async function(re
 });
 
 // show
-router.get('/:id', function(req, res) {
+router.get('/:id', cors(), function(req, res) {
     var commentForm = req.flash('commentForm')[0] || { _id: null, form: {} };
     var commentError = req.flash('commentError')[0] || { _id: null, parentComment: null, errors: {} };
 
@@ -178,7 +179,7 @@ router.get('/:id', function(req, res) {
 });
 
 // edit
-router.get('/:id/edit', util.isLoggedin, checkPermission, function(req, res) {
+router.get('/:id/edit', cors(), util.isLoggedin, checkPermission, function(req, res) {
     var post = req.flash('post')[0];
     var errors = req.flash('errors')[0] || {};
     if (!post) {
@@ -195,7 +196,7 @@ router.get('/:id/edit', util.isLoggedin, checkPermission, function(req, res) {
 });
 
 // update
-router.put('/:id', util.isLoggedin, checkPermission, upload.single('newAttachment'), async function(req, res) {
+router.put('/:id', cors().util.isLoggedin, checkPermission, upload.single('newAttachment'), async function(req, res) {
     var post = await Post.findOne({ _id: req.params.id }).populate({ path: 'attachment', match: { isDeleted: false } });
     if (post.attachment && (req.file || !req.body.attachment)) {
         post.attachment.processDelete();
@@ -213,7 +214,7 @@ router.put('/:id', util.isLoggedin, checkPermission, upload.single('newAttachmen
 });
 
 // destroy
-router.delete('/:id', util.isLoggedin, checkPermission, function(req, res) {
+router.delete('/:id', cors(), util.isLoggedin, checkPermission, function(req, res) {
     Post.deleteOne({ _id: req.params.id }, function(err) {
         if (err) return res.json(err);
         res.redirect('/posts' + res.locals.getPostQueryString());
