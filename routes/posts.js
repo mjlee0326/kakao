@@ -10,6 +10,7 @@ var util = require('../util');
 const { post } = require('./home');
 const cors = require('cors');
 
+
 // Index
 router.get('/', cors(), async function(req, res) {
     var page = Math.max(1, parseInt(req.query.page));
@@ -145,14 +146,15 @@ router.post('/', cors(), util.isLoggedin, upload.single('attachment'), async fun
         if (err) {
             req.flash('post', req.body);
             req.flash('errors', util.parseError(err));
-            return res.redirect('/posts/new' + res.locals.getPostQueryString());
+            // return res.redirect('/posts/new' + res.locals.getPostQueryString());
+            return res.json({ success: false });
         }
         if (attachment) {
             attachment.postId = post._id;
             attachment.save();
         }
         // res.redirect('/posts' + res.locals.getPostQueryString(false, { page: 1, searchText: '' }));
-        res.json();
+        res.json({ success: true });
     });
 });
 
