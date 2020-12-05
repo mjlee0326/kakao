@@ -196,7 +196,7 @@ router.get('/:id/edit', cors(), util.isLoggedin, checkPermission, function(req, 
 });
 
 // update
-router.put('/:id', cors().util.isLoggedin, checkPermission, upload.single('newAttachment'), async function(req, res) {
+router.put('/:id', cors(), util.isLoggedin, checkPermission, upload.single('newAttachment'), async function(req, res) {
     var post = await Post.findOne({ _id: req.params.id }).populate({ path: 'attachment', match: { isDeleted: false } });
     if (post.attachment && (req.file || !req.body.attachment)) {
         post.attachment.processDelete();
